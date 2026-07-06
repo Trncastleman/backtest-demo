@@ -1,0 +1,27 @@
+{
+  "name": "backtest-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "React + TypeScript demo of MetaQuant backtesting concepts with OHLCV handling, strategy simulation, indicators, equity curves, and trade visualization.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "lightweight-charts": "^5.0.9",
+    "lucide-react": "^0.468.0",
+    "vite": "^6.0.0",
+    "typescript": "^5.6.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "vitest": "^2.1.8"
+  }
+}
