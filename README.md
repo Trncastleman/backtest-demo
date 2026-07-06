@@ -1,5 +1,8 @@
 # MetaQuant Backtest Demo
 
+<img width="1477" height="944" alt="image" src="https://github.com/user-attachments/assets/a25a0fa3-6ade-4b1e-908e-8071f1df7839" />
+
+
 Public React + TypeScript demo of MetaQuant's backtesting concepts, with OHLCV data handling, strategy simulation, technical indicators, equity curves, and trade visualization.
 
 This repository is a small, browser-runnable proof project based on the local backtesting layer from MetaQuant. It is intentionally focused on the engine and user-facing backtest review flow rather than the full SaaS product.
