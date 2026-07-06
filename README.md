@@ -91,5 +91,5 @@ This public demo does not include the private MetaQuant SaaS surface:
 Those pieces belong to the full product. This repo is a focused public demonstration of the local backtesting concepts and frontend review experience.
 
 ## Notes
-
+I built this as a public, demo-safe version of backtesting concepts from a private trading SaaS project.
 Backtests are simulations, not trading advice. The sample data is generated for demonstration and should not be used for financial decisions.
