@@ -209,6 +209,61 @@ h2 {
   margin: 0;
 }
 
+.chart-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.range-control {
+  align-items: center;
+  background: #f1f5f9;
+  border: 1px solid #dbe3ef;
+  border-radius: 6px;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+}
+
+.range-control button {
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 42px;
+  padding: 6px 9px;
+}
+
+.range-control button.active,
+.range-control button[aria-pressed="true"] {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.toggle-control {
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #334155;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.toggle-control input {
+  accent-color: #2563eb;
+  margin: 0;
+}
+
 .chart {
   min-height: 420px;
   width: 100%;
@@ -285,5 +340,19 @@ th {
   .toolbar button,
   .file-button {
     width: 100%;
+  }
+
+  .panel-header,
+  .chart-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .range-control {
+    width: 100%;
+  }
+
+  .range-control button {
+    flex: 1;
   }
 }

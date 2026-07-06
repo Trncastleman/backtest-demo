@@ -5,20 +5,25 @@ import {
   createChart,
   createSeriesMarkers,
   type IChartApi,
+  type ISeriesMarkersPluginApi,
   type ISeriesApi,
   type Time,
 } from "lightweight-charts";
+import { rangeToSeconds, type ChartRange } from "@/chart-range";
 import type { BacktestTrade, OhlcvBar } from "@/engine/types";
 
 type Props = {
   bars: OhlcvBar[];
   trades: BacktestTrade[];
+  range: ChartRange;
+  showMarkers: boolean;
 };
 
-export function BacktestChart({ bars, trades }: Props) {
+export function BacktestChart({ bars, trades, range, showMarkers }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const markersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -54,6 +59,7 @@ export function BacktestChart({ bars, trades }: Props) {
 
     chartRef.current = chart;
     seriesRef.current = series;
+    markersRef.current = createSeriesMarkers(series, []);
 
     const observer = new ResizeObserver(([entry]) => {
       if (!entry) return;
@@ -63,16 +69,17 @@ export function BacktestChart({ bars, trades }: Props) {
 
     return () => {
       observer.disconnect();
+      markersRef.current?.detach();
       chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
+      markersRef.current = null;
     };
   }, []);
 
   useEffect(() => {
-    const chart = chartRef.current;
     const series = seriesRef.current;
-    if (!chart || !series) return;
+    if (!series) return;
 
     series.setData(
       bars.map((bar) => ({
@@ -84,9 +91,9 @@ export function BacktestChart({ bars, trades }: Props) {
       })),
     );
 
-    createSeriesMarkers(
-      series,
-      trades.flatMap((trade) => [
+    markersRef.current?.setMarkers(
+      showMarkers
+        ? trades.flatMap((trade) => [
         {
           time: trade.entryTime as Time,
           position: "belowBar" as const,
@@ -101,11 +108,27 @@ export function BacktestChart({ bars, trades }: Props) {
           shape: "arrowDown" as const,
           text: trade.pnl >= 0 ? "Exit +" : "Exit -",
         },
-      ]),
+      ])
+        : [],
     );
+  }, [bars, trades, showMarkers]);
 
-    chart.timeScale().fitContent();
-  }, [bars, trades]);
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart || bars.length === 0) return;
+
+    const last = bars[bars.length - 1];
+    const seconds = rangeToSeconds(range);
+    if (!seconds || !last) {
+      chart.timeScale().fitContent();
+      return;
+    }
+
+    chart.timeScale().setVisibleRange({
+      from: Math.max(bars[0].time, last.time - seconds) as Time,
+      to: last.time as Time,
+    });
+  }, [bars, range]);
 
   return <div className="chart" ref={containerRef} />;
 }

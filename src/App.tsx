@@ -7,6 +7,7 @@ import { generateSampleBars } from "@/data/sample-data";
 import { createDemoConfig, type DemoStrategyId, strategyLabels } from "@/demo-strategies";
 import { BacktestChart } from "@/components/BacktestChart";
 import { EquityChart } from "@/components/EquityChart";
+import { chartRangeLabels, type ChartRange } from "@/chart-range";
 
 function formatMoney(value: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -35,6 +36,8 @@ export function App() {
   const [initialDeposit, setInitialDeposit] = useState(10_000);
   const [dataLabel, setDataLabel] = useState("Generated EURUSD H1 sample");
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [chartRange, setChartRange] = useState<ChartRange>("month");
+  const [showTradeMarkers, setShowTradeMarkers] = useState(false);
 
   const config = useMemo(
     () => createDemoConfig(strategy, initialDeposit),
@@ -61,8 +64,8 @@ export function App() {
 
   function resetSampleData() {
     setBars(generateSampleBars(1440));
-      setDataLabel("Generated EURUSD H1 sample");
-      setUploadError(null);
+    setDataLabel("Generated EURUSD H1 sample");
+    setUploadError(null);
   }
 
   async function handleUpload(file: File | undefined) {
@@ -188,10 +191,26 @@ export function App() {
           <div className="panel-header">
             <div>
               <h2>Price and trades</h2>
-              <p>Entries and exits are plotted from the MetaQuant-derived backtest engine.</p>
+              <p>Zoom by period, then toggle entries and exits when you want trade-level detail.</p>
+            </div>
+            <div className="chart-actions" aria-label="Price chart controls">
+              <RangeButtons range={chartRange} onChange={setChartRange} />
+              <label className="toggle-control">
+                <input
+                  checked={showTradeMarkers}
+                  onChange={(event) => setShowTradeMarkers(event.currentTarget.checked)}
+                  type="checkbox"
+                />
+                Entries/exits
+              </label>
             </div>
           </div>
-          <BacktestChart bars={bars} trades={result.trades} />
+          <BacktestChart
+            bars={bars}
+            range={chartRange}
+            showMarkers={showTradeMarkers}
+            trades={result.trades}
+          />
         </div>
 
         <div className="panel">
@@ -200,8 +219,9 @@ export function App() {
               <h2>Equity curve</h2>
               <p>Drawdown-aware equity points emitted by the simulation.</p>
             </div>
+            <RangeButtons range={chartRange} onChange={setChartRange} />
           </div>
-          <EquityChart equityCurve={result.equityCurve} />
+          <EquityChart equityCurve={result.equityCurve} range={chartRange} />
         </div>
       </section>
 
@@ -253,6 +273,30 @@ function Metric({ label, value }: { label: string; value: string }) {
     <div className="metric-card">
       <span>{label}</span>
       <strong>{value}</strong>
+    </div>
+  );
+}
+
+function RangeButtons({
+  range,
+  onChange,
+}: {
+  range: ChartRange;
+  onChange: (range: ChartRange) => void;
+}) {
+  return (
+    <div className="range-control" aria-label="Chart date range">
+      {(Object.keys(chartRangeLabels) as ChartRange[]).map((key) => (
+        <button
+          aria-pressed={range === key}
+          className={range === key ? "active" : undefined}
+          key={key}
+          onClick={() => onChange(key)}
+          type="button"
+        >
+          {chartRangeLabels[key]}
+        </button>
+      ))}
     </div>
   );
 }

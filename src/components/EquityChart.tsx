@@ -7,13 +7,15 @@ import {
   type ISeriesApi,
   type Time,
 } from "lightweight-charts";
+import { rangeToSeconds, type ChartRange } from "@/chart-range";
 import type { EquityPoint } from "@/engine/types";
 
 type Props = {
   equityCurve: EquityPoint[];
+  range: ChartRange;
 };
 
-export function EquityChart({ equityCurve }: Props) {
+export function EquityChart({ equityCurve, range }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Line"> | null>(null);
@@ -72,8 +74,25 @@ export function EquityChart({ equityCurve }: Props) {
         value: point.equity,
       })),
     );
-    chart.timeScale().fitContent();
   }, [equityCurve]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart || equityCurve.length === 0) return;
+
+    const first = equityCurve[0];
+    const last = equityCurve[equityCurve.length - 1];
+    const seconds = rangeToSeconds(range);
+    if (!seconds || !first || !last) {
+      chart.timeScale().fitContent();
+      return;
+    }
+
+    chart.timeScale().setVisibleRange({
+      from: Math.max(first.time, last.time - seconds) as Time,
+      to: last.time as Time,
+    });
+  }, [equityCurve, range]);
 
   return <div className="chart compact" ref={containerRef} />;
 }

@@ -12,6 +12,8 @@ This repository is a small, browser-runnable proof project based on the local ba
 - MetaQuant-derived backtest engine, indicators, exit logic, and rule evaluator.
 - Backtest metrics including net profit, win rate, max drawdown, profit factor, and Sharpe ratio.
 - Candlestick chart with entry/exit markers.
+- Toggleable entry/exit markers, hidden by default for cleaner chart review.
+- Day/week/month/all chart range controls for quick visual zooming.
 - Equity curve visualization.
 - Trade table for reviewing recent closed trades.
 
